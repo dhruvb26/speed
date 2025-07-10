@@ -1,0 +1,33 @@
+# MCP Framework
+mcp
+
+# FastAgent
+mcp-agent
+
+# HTTP requests
+requests
+
+# Google APIs and Authentication
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+
+# Slack SDK
+slack-sdk
+
+# Environment management
+python-dotenv
+
+# Data validation and modeling
+pydantic
+
+# AI/ML frameworks
+pydantic-ai
+langgraph
+
+# Visualization
+ipython
+
+
+# LangGraph visualization
