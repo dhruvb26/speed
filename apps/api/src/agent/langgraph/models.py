@@ -1,7 +1,7 @@
 """
 Pydantic models for structured agent communication and data validation
 """
-from typing import List, Optional, Dict, Any, Literal, Annotated
+from typing import List, Optional, Dict, Any, Annotated
 from pydantic import BaseModel, Field
 from datetime import datetime
 
