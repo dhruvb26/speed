@@ -12,10 +12,3 @@ logs
 
 # mac
 .DS_Store
-
-venv
-credentials.json
-token.json
-
-___pycache___
-__pycache__

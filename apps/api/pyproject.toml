@@ -1,0 +1,22 @@
+[project]
+name = "api"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "google-api-python-client>=2.176.0",
+    "google-auth>=2.40.3",
+    "google-auth-httplib2>=0.2.0",
+    "google-auth-oauthlib>=1.2.2",
+    "ipython>=9.4.0",
+    "langgraph>=0.5.3",
+    "mcp>=1.11.0",
+    "mcp-agent>=0.1.7",
+    "pydantic>=2.11.7",
+    "pydantic-ai>=0.4.2",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.4",
+    "ruff>=0.12.3",
+    "slack-sdk>=3.36.0",
+]
