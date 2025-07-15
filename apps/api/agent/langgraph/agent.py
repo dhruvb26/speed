@@ -1,5 +1,5 @@
 from pydantic_ai import Agent
-from tools import gmail_tools
+from tools import gmail_tools, slack_tools
 from langgraph.graph import StateGraph, START, END
 from models import AgentState, AgentResponse
 import asyncio
@@ -19,7 +19,7 @@ def create_pydantic_agent():
             gmail_tools.list_emails, 
             gmail_tools.get_email_details, 
             gmail_tools.send_email,
-            # slack_tools.send_message, 
+            slack_tools.send_message, 
             # slack_tools.list_channels, 
             # slack_tools.get_channel_history
         ],

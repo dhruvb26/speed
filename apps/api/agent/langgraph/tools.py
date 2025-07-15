@@ -4,6 +4,7 @@ Pydantic AI compatible tools for Gmail and Slack integration
 import os
 import base64
 import requests
+import ssl
 from typing import List, Optional, Dict, Any
 from email.mime.text import MIMEText
 from google.oauth2.credentials import Credentials
@@ -151,7 +152,17 @@ class SlackTools:
         token = os.getenv("SLACK_BOT_TOKEN")
         if not token:
             raise ValueError("SLACK_BOT_TOKEN environment variable not found")
-        self.client = WebClient(token=token)
+        
+        # Create SSL context that handles certificate verification issues on macOS
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
+        # Initialize WebClient with SSL context configuration
+        self.client = WebClient(
+            token=token,
+            ssl=ssl_context
+        )
     
     def list_channels(self) -> List[Dict[str, Any]]:
         """List all channels in workspace"""
