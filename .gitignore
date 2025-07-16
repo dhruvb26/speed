@@ -12,3 +12,6 @@ logs
 
 # mac
 .DS_Store
+
+.venv/
+venv/
