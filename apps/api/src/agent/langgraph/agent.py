@@ -1,7 +1,10 @@
 from pydantic_ai import Agent
-from tools import gmail_tools, slack_tools
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from .tools import gmail_tools, slack_tools
 from langgraph.graph import StateGraph, START, END
-from models import AgentState, AgentResponse
+from .models import AgentState, AgentResponse
 import asyncio
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_core.messages import AIMessage, HumanMessage

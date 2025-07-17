@@ -12,7 +12,7 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from slack_sdk import WebClient
 from datetime import datetime
-from models import EmailMessage, SlackMessage
+from .models import EmailMessage, SlackMessage
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
