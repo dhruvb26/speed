@@ -15,3 +15,8 @@ logs
 
 .venv/
 venv/
+
+token.json
+credentials.json
+
+dist/
