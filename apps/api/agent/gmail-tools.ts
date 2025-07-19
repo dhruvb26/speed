@@ -7,13 +7,14 @@ import * as path from 'path';
 import { EmailMessage, GmailAuthHeaders, GmailListParams, GmailMessageResponse, GmailMessageDetails } from './models.js';
 
 interface TokenData {
-  token: string;
+  access_token: string;
   refresh_token: string;
-  token_uri: string;
-  client_id: string;
-  client_secret: string;
-  scopes: string[];
-  expiry: string;
+  token_uri?: string;
+  client_id?: string;
+  client_secret?: string;
+  scope?: string;
+  token_type?: string;
+  expiry_date?: number;
 }
 
 export class GmailTools {
@@ -33,48 +34,11 @@ export class GmailTools {
 
   private async refreshToken(tokenData: TokenData): Promise<string> {
     console.log('[GmailTools] Refreshing access token...');
-    const refreshUrl = tokenData.token_uri;
-    const refreshBody = new URLSearchParams({
-      client_id: tokenData.client_id,
-      client_secret: tokenData.client_secret,
-      refresh_token: tokenData.refresh_token,
-      grant_type: 'refresh_token',
-    });
-
-    try {
-      console.log(`[GmailTools] Making token refresh request to: ${refreshUrl}`);
-      const response = await fetch(refreshUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: refreshBody,
-      });
-
-      if (!response.ok) {
-        console.error(`[GmailTools] Token refresh failed: ${response.status} ${response.statusText}`);
-        throw new Error(`Token refresh failed: ${response.status} ${response.statusText}`);
-      }
-
-      const refreshData = await response.json();
-      console.log('[GmailTools] Token refresh successful');
-      
-      // Update token data with new access token
-      const updatedTokenData = {
-        ...tokenData,
-        token: refreshData.access_token,
-        expiry: new Date(Date.now() + (refreshData.expires_in * 1000)).toISOString(),
-      };
-
-      // Save updated token data
-      console.log(`[GmailTools] Saving updated token to: ${this.tokenPath}`);
-      fs.writeFileSync(this.tokenPath, JSON.stringify(updatedTokenData), 'utf8');
-      
-      return refreshData.access_token;
-    } catch (error) {
-      console.error(`[GmailTools] Failed to refresh token: ${error}`);
-      throw new Error(`Failed to refresh token: ${error}`);
-    }
+    
+    // For now, we'll skip token refresh since we don't have the required OAuth client credentials
+    // The user should re-authenticate if the token is expired
+    console.log('[GmailTools] Token refresh not implemented - please re-authenticate if token is expired');
+    throw new Error('Token refresh not implemented - please re-authenticate if token is expired');
   }
 
   private async getAuthHeaders(): Promise<GmailAuthHeaders> {
@@ -89,11 +53,11 @@ export class GmailTools {
       const tokenData: TokenData = JSON.parse(fs.readFileSync(this.tokenPath, 'utf8'));
       console.log('[GmailTools] Token file loaded successfully');
       
-      let accessToken = tokenData.token;
+      let accessToken = tokenData.access_token;
       
       // Check if token is expired
-      if (tokenData.expiry) {
-        const expiryDate = new Date(tokenData.expiry);
+      if (tokenData.expiry_date) {
+        const expiryDate = new Date(tokenData.expiry_date);
         const now = new Date();
         const timeUntilExpiry = expiryDate.getTime() - now.getTime();
         
