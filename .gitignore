@@ -12,3 +12,11 @@ logs
 
 # mac
 .DS_Store
+
+.venv/
+venv/
+
+token.json
+credentials.json
+
+dist/
