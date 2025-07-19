@@ -14,9 +14,13 @@ logs
 .DS_Store
 
 .venv/
+<<<<<<< Updated upstream
 venv/
 
 token.json
 credentials.json
 
 dist/
+=======
+venv/
+>>>>>>> Stashed changes
