@@ -5,9 +5,15 @@
 
 import { GmailTools } from './gmail-tools.js';
 import { DynamicTool } from '@langchain/core/tools';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Initialize tool instances
-const gmailTools = new GmailTools();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Initialize tool instances with correct token path
+// Go up one level from dist/ to get to the source directory
+const gmailTools = new GmailTools(path.join(__dirname, '..', 'utils', 'token.json'));
 
 // Create LangChain tools from our Gmail and Slack tools
 export const listEmailsTool = new DynamicTool({
