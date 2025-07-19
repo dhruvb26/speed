@@ -1,11 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import {
-  ChevronsUpDownIcon,
-  LogOutIcon,
-  SettingsIcon,
-} from 'lucide-react'
+import { ChevronsUpDownIcon, LogOutIcon, SettingsIcon } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { ModeToggle } from '@/components/ui/mode-toggle'
+import { SignOutButton } from '@clerk/nextjs'
 
 export function TeamSwitcher({
   teams,
@@ -85,8 +82,12 @@ export function TeamSwitcher({
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <LogOutIcon className="icon-sidebar text-muted-foreground group-hover/settings:text-foreground transition-colors" />
-              <span>Logout</span>
+              <SignOutButton>
+                <div className="flex items-center gap-2">
+                  <LogOutIcon className="icon-sidebar text-muted-foreground group-hover/settings:text-foreground transition-colors" />
+                  <span>Logout</span>
+                </div>
+              </SignOutButton>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
