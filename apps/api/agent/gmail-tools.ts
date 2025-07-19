@@ -20,7 +20,7 @@ export class GmailTools {
   private tokenPath: string;
   private baseUrl: string = 'https://gmail.googleapis.com';
 
-  constructor(tokenPath: string = './token.json') {
+  constructor(tokenPath: string = '../utils/token.json') {
     if (!path.isAbsolute(tokenPath)) {
       // Resolve relative to current working directory
       this.tokenPath = path.resolve(tokenPath);
