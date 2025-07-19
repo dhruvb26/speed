@@ -1,5 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 const isOnboardingRoute = createRouteMatcher(['/onboarding'])
 const isPublicRoute = createRouteMatcher([
@@ -7,9 +7,10 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/',
   '/api/webhooks(.*)',
+  '/api/callbacks(.*)',
 ])
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
+export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims, redirectToSignIn } = await auth()
 
   // For users visiting /onboarding, don't try to redirect

@@ -22,6 +22,20 @@
       "when": 1752959512786,
       "tag": "0002_slimy_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752965458844,
+      "tag": "0003_tired_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752965982844,
+      "tag": "0004_rich_living_lightning",
+      "breakpoints": true
     }
   ]
 }
