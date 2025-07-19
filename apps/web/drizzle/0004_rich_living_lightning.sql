@@ -1,0 +1,1 @@
+ALTER TABLE "integrations" ADD COLUMN "refresh_token_expiry" timestamp;

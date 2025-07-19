@@ -4,6 +4,7 @@ import {
   varchar,
   timestamp,
   jsonb,
+  text,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
@@ -24,14 +25,44 @@ export const organizationsTable = pgTable('organizations', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
 
+export const integrationsTable = pgTable('integrations', {
+  id: varchar({ length: 255 }).primaryKey(),
+  userId: varchar({ length: 255 })
+    .notNull()
+    .references(() => usersTable.id),
+  provider: varchar({ length: 50 }).notNull(),
+  accessToken: text('access_token').notNull(),
+  refreshToken: text('refresh_token'),
+  tokenExpiry: timestamp('token_expiry'),
+  refreshTokenExpiry: timestamp('refresh_token_expiry'),
+  providerUserId: varchar('provider_user_id', { length: 255 }),
+  metadata: jsonb('metadata'), 
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
 // relations
 export const usersRelations = relations(usersTable, ({ many }) => ({
   organizations: many(organizationsTable),
+  integrations: many(integrationsTable),
 }))
 
-export const organizationsRelations = relations(organizationsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [organizationsTable.userId],
-    references: [usersTable.id],
-  }),
-}))
+export const organizationsRelations = relations(
+  organizationsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [organizationsTable.userId],
+      references: [usersTable.id],
+    }),
+  })
+)
+
+export const integrationsRelations = relations(
+  integrationsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [integrationsTable.userId],
+      references: [usersTable.id],
+    }),
+  })
+)
