@@ -3,11 +3,8 @@ import { z } from 'zod'
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string(),
     CLERK_SECRET_KEY: z.string(),
-    CLERK_WEBHOOK_SIGNING_SECRET: z.string(),
-    GOOGLE_OAUTH_CLIENT_ID: z.string(),
-    GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
+    BACKEND_URL: z.string(),
   },
   client: {
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string(),
