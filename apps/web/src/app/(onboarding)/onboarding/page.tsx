@@ -16,7 +16,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useMousePositionRef } from '@/hooks/use-mouse-position-ref'
 import StatusDisplay from '@/components/global/status-display'
 
-// Zod schema for form validation
 const onboardingSchema = z.object({
   organizationName: z
     .string()
@@ -86,7 +85,7 @@ export default function OnboardingComponent() {
         .then((res) => {
           console.log('Organization created:', res)
           reset()
-          router.push('/')
+          router.push('/chat')
         })
         .catch((err) => {
           console.error(
@@ -144,7 +143,7 @@ export default function OnboardingComponent() {
             )}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Setting up...' : 'Complete Setup'}
+              {isLoading ? 'Routing to Dashboard' : 'Complete Setup'}
             </Button>
           </form>
         </CardContent>

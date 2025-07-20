@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './card'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
+import { env } from '@/env'
 
 export default function Integrations() {
   const router = useRouter()
@@ -26,7 +27,7 @@ export default function Integrations() {
       return
     }
 
-    const redirectUri = `http://localhost:8787/api/auth/callback/gmail`
+    const redirectUri = `${env.NEXT_PUBLIC_API_URL}/api/auth/callback/gmail`
     const state = encodeURIComponent(JSON.stringify({ userId: user.id }))
     const gmailAuth = `https://accounts.google.com/o/oauth2/v2/auth?client_id=9403793679-382h9tsv0bgo4sslomdm99iafdlc9878.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes}&access_type=offline&prompt=consent&state=${state}`
     router.push(gmailAuth)
