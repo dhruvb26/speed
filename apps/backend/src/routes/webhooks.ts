@@ -42,7 +42,7 @@ webhooks.post("/clerk", async (c) => {
     console.error("Error verifying webhook:", err);
     return c.text("Error occurred", 400);
   }
-  
+
   const db = createDb();
   const eventType = evt.type;
 

@@ -20,6 +20,7 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-4">
       <div className="w-full max-w-[20rem]">
+      <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible" />
         <SignIn.Root>
           <Clerk.Loading>
             {(isGlobalLoading) => (
@@ -68,7 +69,6 @@ export default function SignInPage() {
                   </Clerk.Field>
 
                   <div className="grid w-full gap-y-4">
-                  <div id="clerk-captcha" data-cl-theme="light" data-cl-size="flexible" />
                     <SignIn.Action submit asChild>
                       <Button size="sm" disabled={isGlobalLoading}>
                         <Clerk.Loading>

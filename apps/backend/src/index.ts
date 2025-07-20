@@ -6,11 +6,10 @@ import user from "@/routes/user";
 
 const app = new Hono();
 
-// Add CORS middleware
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:3000", "https://yourdomain.com"], // Add your frontend URLs
+    origin: [process.env.WEB_APP_URL!],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: [
       "Content-Type",
@@ -22,12 +21,14 @@ app.use(
   })
 );
 
-// Health check endpoint
 app.get("/", (c) => {
-  return c.json({ message: "Backend API is running", status: "healthy" });
+  return c.json("OK - Version 0.0.1");
 });
 
-// Mount routes
+app.get("/health", (c) => {
+  return c.json("OK - Version 0.0.1");
+});
+
 app.route("/api/auth", auth);
 app.route("/api/webhooks", webhooks);
 app.route("/api/user", user);

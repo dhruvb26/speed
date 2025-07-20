@@ -9,7 +9,7 @@ export async function getUser() {
     return null
   }
 
-  const response = await fetch(`${env.BACKEND_URL}/api/user/${userId}`)
+  const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/user/${userId}`)
   const data = await response.json()
 
   return data
