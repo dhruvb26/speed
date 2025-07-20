@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:ngrok":"ngrok http 8787 --url https://default.internal",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
