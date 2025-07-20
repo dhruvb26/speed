@@ -1,12 +1,35 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import auth from "@/routes/auth";
+import webhooks from "@/routes/webhooks";
+import user from "@/routes/user";
 
-const app = new Hono()
+const app = new Hono();
 
-app.get('/', (c) => {
+// Add CORS middleware
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:3000", "https://yourdomain.com"], // Add your frontend URLs
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: [
+      "Content-Type",
+      "Authorization",
+      "svix-id",
+      "svix-timestamp",
+      "svix-signature",
+    ],
+  })
+);
 
-  const gmailAuth = `https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=${encodeURIComponent("http://localhost:3000/api/auth/gmail/callback")}&response_type=code&scope=SCOPES&access_type=offline&prompt=consent`
+// Health check endpoint
+app.get("/", (c) => {
+  return c.json({ message: "Backend API is running", status: "healthy" });
+});
 
-  return c.text('Hello Hono!')
-})
+// Mount routes
+app.route("/api/auth", auth);
+app.route("/api/webhooks", webhooks);
+app.route("/api/user", user);
 
-export default app
+export default app;

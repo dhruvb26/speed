@@ -1,8 +1,6 @@
 'use server'
-import { db } from '@/index'
-import { usersTable } from '@/db/schema'
 import { auth } from '@clerk/nextjs/server'
-import { eq } from 'drizzle-orm'
+import { env } from '@/env'
 
 export async function getUser() {
   const { userId } = await auth()
@@ -11,15 +9,8 @@ export async function getUser() {
     return null
   }
 
-  const user = await db
-    .select({
-      id: usersTable.id,
-      name: usersTable.name,
-      email: usersTable.email,
-      usage: usersTable.usage,
-    })
-    .from(usersTable)
-    .where(eq(usersTable.id, userId))
+  const response = await fetch(`${env.BACKEND_URL}/api/user/${userId}`)
+  const data = await response.json()
 
-  return user[0]
+  return data
 }
