@@ -3,49 +3,20 @@
 import { v4 as uuid } from 'uuid'
 import { env } from '@/env'
 import { auth } from '@clerk/nextjs/server'
-
-export interface ChatMessage {
-  role: 'user' | 'assistant'
-  content: string
-  id?: string
-}
-
-export interface SendMessageRequest {
-  messages: ChatMessage[]
-  config: {
-    thread_id: string
-  }
-  userId: string
-}
-
-export interface LangChainMessage {
-  lc: number
-  type: string
-  id: string[]
-  kwargs: {
-    content: string
-    additional_kwargs: any
-    response_metadata?: any
-    id: string
-    tool_calls?: any[]
-    invalid_tool_calls?: any[]
-    usage_metadata?: any
-  }
-}
-
-export interface SendMessageResponse {
-  messages: LangChainMessage[]
-  thread_id: string
-}
+import type {
+  ChatMessage,
+  SendMessageRequest,
+  SendMessageResponse,
+  ChatHistoryResponse,
+  UserChat,
+  Result,
+  ApiResponse,
+} from '@/types'
 
 export async function sendMessage(
   userMessage: string,
   threadId?: string
-): Promise<{
-  success: boolean
-  data?: SendMessageResponse
-  error?: string
-}> {
+): Promise<ApiResponse<SendMessageResponse>> {
   try {
     const finalThreadId = threadId || uuid()
     const { userId } = await auth()
@@ -85,10 +56,17 @@ export async function sendMessage(
       }
     }
 
-    const data: SendMessageResponse = await response.json()
+    const result: Result<SendMessageResponse> = await response.json()
+
+    if (result.error) {
+      return {
+        success: false,
+        error: result.error,
+      }
+    }
 
     const finalResponseData = {
-      ...data,
+      ...result.data!,
       thread_id: finalThreadId,
     }
 
@@ -105,72 +83,9 @@ export async function sendMessage(
   }
 }
 
-export interface CheckpointMessage {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: Date
-}
-
-export interface LangGraphMessageKwargs {
-  content: string
-  additional_kwargs: Record<string, unknown>
-  response_metadata: Record<string, unknown>
-  id: string
-  tool_calls?: unknown[]
-  invalid_tool_calls?: unknown[]
-  usage_metadata?: Record<string, unknown>
-}
-
-export interface LangGraphMessage {
-  lc: number
-  type: string
-  id: [string, string, string]
-  kwargs: LangGraphMessageKwargs
-}
-
-export interface CheckpointConfig {
-  configurable: {
-    thread_id: string
-    checkpoint_ns: string
-    checkpoint_id: string
-  }
-}
-
-export interface CheckpointValues {
-  messages?: LangGraphMessage[]
-  [key: string]: unknown
-}
-
-export interface CheckpointMetadata {
-  step: number
-  source: string
-  writes: Record<string, unknown> | null
-  parents: Record<string, unknown>
-}
-
-export interface Checkpoint {
-  checkpointId: string
-  timestamp: string
-  config: CheckpointConfig
-  values: CheckpointValues
-  metadata: CheckpointMetadata
-  parentConfig: CheckpointConfig
-  pendingSends: unknown[]
-}
-
-export interface ChatHistoryResponse {
+export async function getChatHistory(
   threadId: string
-  checkpointCount: number
-  checkpoints: Checkpoint[]
-  messages: LangGraphMessage[]
-}
-
-export async function getChatHistory(threadId: string): Promise<{
-  success: boolean
-  data?: ChatHistoryResponse
-  error?: string
-}> {
+): Promise<ApiResponse<ChatHistoryResponse>> {
   try {
     const response = await fetch(
       `${env.NEXT_PUBLIC_API_URL}/api/chat/${threadId}`,
@@ -189,11 +104,18 @@ export async function getChatHistory(threadId: string): Promise<{
       }
     }
 
-    const data: ChatHistoryResponse = await response.json()
+    const result: Result<ChatHistoryResponse> = await response.json()
+
+    if (result.error) {
+      return {
+        success: false,
+        error: result.error,
+      }
+    }
 
     return {
       success: true,
-      data,
+      data: result.data!,
     }
   } catch (error) {
     console.error('Error fetching chat history:', error)
@@ -204,19 +126,9 @@ export async function getChatHistory(threadId: string): Promise<{
   }
 }
 
-export interface UserChat {
-  id: string
-  name: string
+export async function getUserChats(
   userId: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-export async function getUserChats(userId: string): Promise<{
-  success: boolean
-  data?: UserChat[]
-  error?: string
-}> {
+): Promise<ApiResponse<UserChat[]>> {
   try {
     const response = await fetch(
       `${env.NEXT_PUBLIC_API_URL}/api/chat/user/${userId}`,
@@ -235,11 +147,18 @@ export async function getUserChats(userId: string): Promise<{
       }
     }
 
-    const data: UserChat[] = await response.json()
+    const result: Result<UserChat[]> = await response.json()
+
+    if (result.error) {
+      return {
+        success: false,
+        error: result.error,
+      }
+    }
 
     return {
       success: true,
-      data,
+      data: result.data!,
     }
   } catch (error) {
     console.error('Error fetching user chats:', error)
@@ -250,10 +169,9 @@ export async function getUserChats(userId: string): Promise<{
   }
 }
 
-export async function deleteChat(threadId: string): Promise<{
-  success: boolean
-  error?: string
-}> {
+export async function deleteChat(
+  threadId: string
+): Promise<ApiResponse<{ message: string }>> {
   try {
     const response = await fetch(
       `${env.NEXT_PUBLIC_API_URL}/api/chat/${threadId}`,
@@ -272,8 +190,18 @@ export async function deleteChat(threadId: string): Promise<{
       }
     }
 
+    const result: Result<{ message: string }> = await response.json()
+
+    if (result.error) {
+      return {
+        success: false,
+        error: result.error,
+      }
+    }
+
     return {
       success: true,
+      data: result.data!,
     }
   } catch (error) {
     console.error('Error deleting chat:', error)
@@ -284,10 +212,10 @@ export async function deleteChat(threadId: string): Promise<{
   }
 }
 
-export async function updateChat(threadId: string, name: string): Promise<{
-  success: boolean
-  error?: string
-}> {
+export async function updateChat(
+  threadId: string,
+  name: string
+): Promise<ApiResponse<{ message: string; threadId: string }>> {
   try {
     const response = await fetch(
       `${env.NEXT_PUBLIC_API_URL}/api/chat/${threadId}`,
@@ -307,8 +235,19 @@ export async function updateChat(threadId: string, name: string): Promise<{
       }
     }
 
+    const result: Result<{ message: string; threadId: string }> =
+      await response.json()
+
+    if (result.error) {
+      return {
+        success: false,
+        error: result.error,
+      }
+    }
+
     return {
       success: true,
+      data: result.data!,
     }
   } catch (error) {
     console.error('Error updating chat:', error)

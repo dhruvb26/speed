@@ -1,4 +1,5 @@
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+import "dotenv/config";
 
 const checkpointer = PostgresSaver.fromConnString(process.env.DATABASE_URL!);
 
