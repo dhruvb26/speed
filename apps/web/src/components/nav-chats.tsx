@@ -1,6 +1,14 @@
 'use client'
 
-import { MoreHorizontal, Trash2, PenSquare, HomeIcon } from 'lucide-react'
+import {
+  MoreHorizontal,
+  Trash2,
+  PenSquare,
+  MessageCircle,
+  Check,
+} from 'lucide-react'
+import React, { useState } from 'react'
+import type { UserChat } from '@/actions/chat'
 
 import {
   DropdownMenu,
@@ -17,102 +25,169 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import React from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { MessageSquare } from 'lucide-react'
-import Link from 'next/link'
-export function NavChats({
-  chats,
-}: {
-  chats: {
-    name: string
-    url: string
-    icon: React.ReactNode
-  }[]
-}) {
+import { deleteChat, updateChat } from '@/actions/chat'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+
+interface NavChatsProps {
+  chats: UserChat[]
+}
+
+export function NavChats({ chats }: NavChatsProps) {
   const { isMobile } = useSidebar()
   const pathname = usePathname()
+  const router = useRouter()
+  const [renamingChatId, setRenamingChatId] = useState<string | null>(null)
+  const [newChatName, setNewChatName] = useState('')
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
+
+  const handleRenameClick = (chat: UserChat) => {
+    setRenamingChatId(chat.id)
+    setNewChatName(chat.name)
+  }
+
+  const handleRenameSubmit = async (chatId: string) => {
+    if (newChatName.trim()) {
+      const result = await updateChat(chatId, newChatName.trim())
+      if (result.success) {
+        setRenamingChatId(null)
+        setNewChatName('')
+        setOpenDropdownId(null)
+        router.refresh()
+      }
+    }
+  }
+
+  const handleRenameCancel = () => {
+    setRenamingChatId(null)
+    setNewChatName('')
+    setOpenDropdownId(null)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent, chatId: string) => {
+    if (e.key === 'Enter') {
+      handleRenameSubmit(chatId)
+    } else if (e.key === 'Escape') {
+      handleRenameCancel()
+    }
+  }
+
+  if (chats.length === 0) {
+    return (
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden flex-1 flex flex-col min-h-0">
+        <SidebarGroupLabel>Chats</SidebarGroupLabel>
+        <div className="justify-center flex flex-1 items-center">
+          <p className="text-xs text-sidebar-foreground/70">No chats yet</p>
+        </div>
+      </SidebarGroup>
+    )
+  }
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden flex-1 flex flex-col min-h-0">
       <SidebarGroupLabel>Chats</SidebarGroupLabel>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link
-              href="/chat"
-              className={cn(
-                'flex items-center space-x-2 p-2 rounded-md',
-                pathname === '/chat' ? 'bg-accent' : 'hover:bg-muted'
-              )}
-            >
-              <HomeIcon
-                className={cn(
-                  'transition-colors icon-nav',
-                  pathname === '/chat'
-                    ? 'text-foreground'
-                    : 'text-muted-foreground group-hover/menu-item:text-foreground'
-                )}
-              />
-              <span>Home</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        {chats.map((item) => (
-          <SidebarMenuItem key={item.name} className="group/item">
-            <SidebarMenuButton asChild>
-              <a
-                href={item.url}
-                className={cn(
-                  'flex items-center space-x-2 p-2 rounded-md',
-                  pathname === item.url ? 'bg-accent' : 'hover:bg-muted'
-                )}
-              >
-                {item.icon &&
-                  React.cloneElement(
-                    item.icon as React.ReactElement<
-                      React.SVGProps<SVGSVGElement>
-                    >,
-                    {
-                      className: cn(
-                        'transition-colors icon-nav',
-                        pathname === item.url
-                          ? 'text-foreground'
-                          : 'text-muted-foreground group-hover/menu-item:text-foreground'
-                      ),
-                    }
+      <SidebarMenu className="flex-1 overflow-y-auto custom-scrollbar">
+        {chats.map((chat) => {
+          const chatUrl = `/chat/${chat.id}`
+          const isActive = pathname === chatUrl
+          const isRenaming = renamingChatId === chat.id
+
+          return (
+            <SidebarMenuItem key={chat.id} className="group/item">
+              <SidebarMenuButton asChild>
+                <button
+                  onClick={() => router.push(chatUrl)}
+                  className={cn(
+                    'flex items-center space-x-2 p-2 rounded-md w-full text-left',
+                    isActive ? 'bg-accent' : 'group-hover/item:bg-muted'
                   )}
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction
-                  showOnHover
-                  className={`group-hover/item:bg-sidebar-accent group-hover/item:text-sidebar-accent-foreground group-hover/item:cursor-pointer pr-2`}
                 >
-                  <MoreHorizontal className="text-muted-foreground" />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-40"
-                side={isMobile ? 'bottom' : 'right'}
-                align={isMobile ? 'end' : 'start'}
+                  <MessageCircle
+                    className={cn(
+                      'transition-colors icon-nav',
+                      isActive
+                        ? 'text-foreground'
+                        : 'text-muted-foreground group-hover/menu-item:text-foreground'
+                    )}
+                  />
+                  <span className="truncate flex-1">{chat.name}</span>
+                </button>
+              </SidebarMenuButton>
+              <DropdownMenu
+                open={openDropdownId === chat.id}
+                onOpenChange={(open) => {
+                  if (open) {
+                    setOpenDropdownId(chat.id)
+                  } else {
+                    setOpenDropdownId(null)
+                    if (renamingChatId === chat.id) {
+                      setRenamingChatId(null)
+                      setNewChatName('')
+                    }
+                  }
+                }}
               >
-                <DropdownMenuItem>
-                  <PenSquare className="text-muted-foreground" />
-                  <span>Rename</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-red-500/10">
-                  <Trash2 className="text-destructive" />
-                  <span className="text-destructive">Delete</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        ))}
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuAction
+                    showOnHover
+                    className={`group-hover/item:bg-sidebar-accent group-hover/item:text-sidebar-accent-foreground group-hover/item:cursor-pointer pr-2`}
+                  >
+                    <MoreHorizontal className="text-muted-foreground" />
+                    <span className="sr-only">More</span>
+                  </SidebarMenuAction>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-40"
+                  side={isMobile ? 'bottom' : 'right'}
+                  align={isMobile ? 'end' : 'start'}
+                >
+                  {isRenaming ? (
+                    <div className="flex items-center gap-1 p-1">
+                      <Input
+                        value={newChatName}
+                        onChange={(e) => setNewChatName(e.target.value)}
+                        onKeyDown={(e) => handleKeyDown(e, chat.id)}
+                        className="h-7 text-xs flex-1 min-w-0"
+                        autoFocus
+                      />
+                      <Button
+                        onClick={() => handleRenameSubmit(chat.id)}
+                        size="icon"
+                        variant="outline"
+                      >
+                        <Check className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleRenameClick(chat)
+                      }}
+                    >
+                      <PenSquare className="text-muted-foreground" />
+                      <span>Rename</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem
+                    className="focus:bg-red-500/10"
+                    onClick={() => {
+                      setOpenDropdownId(null)
+                      deleteChat(chat.id)
+                      router.push('/chat')
+                    }}
+                  >
+                    <Trash2 className="text-destructive" />
+                    <span className="text-destructive">Delete</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          )
+        })}
       </SidebarMenu>
     </SidebarGroup>
   )
