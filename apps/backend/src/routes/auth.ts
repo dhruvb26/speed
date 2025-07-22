@@ -124,7 +124,7 @@ auth.get("/callback/gmail", async (c) => {
       });
     }
 
-    return c.redirect(`${WEB_APP_URL}/integrations?gmail=connected`);
+    return c.redirect(`${WEB_APP_URL}/integrations`);
   } catch (error) {
     console.error("OAuth callback error:", error);
   }

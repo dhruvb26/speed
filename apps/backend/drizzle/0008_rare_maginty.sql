@@ -1,0 +1,1 @@
+ALTER TABLE "composio_integrations" RENAME COLUMN "toolkit_id" TO "toolkits";

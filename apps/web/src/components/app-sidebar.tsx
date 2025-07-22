@@ -1,9 +1,9 @@
 import * as React from 'react'
 import {
   BlocksIcon,
-  HomeIcon,
   LayersIcon,
   Mail,
+  PenSquare,
   Search,
   WorkflowIcon,
 } from 'lucide-react'
@@ -18,6 +18,8 @@ import {
 import { NavMain } from '@/components/nav-main'
 import { TeamSwitcher } from '@/components/team-switcher'
 import UsageCard from '@/components/global/usage-card'
+import { currentUser } from '@clerk/nextjs/server'
+import { getUserChats, type UserChat } from '@/actions/chat'
 
 const data = {
   main: [
@@ -35,8 +37,14 @@ const data = {
         <BlocksIcon className="text-muted-foreground group-hover/menu-item:text-foreground transition-colors icon-nav" />
       ),
     },
+    {
+      title: 'New Chat',
+      url: '/chat',
+      icon: (
+        <PenSquare className="text-muted-foreground group-hover/menu-item:text-foreground transition-colors icon-nav" />
+      ),
+    },
   ],
-  chats: [],
   teams: [
     {
       name: "Dhruv's Team",
@@ -53,7 +61,17 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const user = await currentUser()
+  let chats: UserChat[] = []
+  if (user?.id) {
+    const result = await getUserChats(user.id)
+    if (result.success && result.data) {
+      chats = result.data
+    }
+  }
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="flex flex-col items-center justify-between">
@@ -63,9 +81,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <span>Search</span>
         </SidebarMenuButton>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="flex flex-col">
         <NavMain items={data.main} />
-        <NavChats chats={data.chats} />
+        <NavChats chats={chats} />
       </SidebarContent>
       <SidebarFooter className="flex flex-col items-center justify-center gap-1">
         <UsageCard />
