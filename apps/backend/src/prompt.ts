@@ -72,17 +72,34 @@ Your task is to understand the user's requirements, dynamically plan the user's 
 {example_prompt}
 `;
 
-export const PLAN_CHAT_EXAMPLE = `User: hello.
+export const PLAN_CHAT_EXAMPLE = `User: Research a company online and draft an investment memo.
 Output result:
 <root>
-  <name>Chat</name>
-  <thought>The user wrote "hello". This is a simple greeting that requires a conversational response using the chat tool.</thought>
+  <name>Investment Memo Research and Drafting</name>
+  <thought>The user wants to research a company and draft an investment memo. However, they haven't specified which company to research. I need to first ask for user input to identify the target company, then conduct research using BRAVE_SEARCH, and finally use USER_INPUT again to draft the memo.</thought>
   <workflow>
-    <!-- Chat nodes can exist without complex steps when it's a simple interaction. -->
-    <node tool="Chat" id="0" dependsOn="">
-      <task>Respond to user greeting</task>
+    <node tool="USER_INPUT" id="0" dependsOn="">
+      <task>Get company name from user</task>
       <steps>
-        <step>Generate friendly greeting response</step>
+        <step>Ask user to specify which company they want to research</step>
+        <step output="company_name">Collect the company name for research</step>
+      </steps>
+    </node>
+    <node tool="BRAVE_SEARCH" id="1" dependsOn="0">
+      <task>Research comprehensive company information</task>
+      <steps>
+        <step input="company_name">Search for company financial information and performance</step>
+        <step input="company_name">Research company's market position and competitive landscape</step>
+        <step input="company_name">Find recent news and developments about the company</step>
+        <step input="company_name">Gather information about company leadership and strategy</step>
+        <step output="company_research">Compile all research findings</step>
+      </steps>
+    </node>
+    <node tool="Analyzer" id="2" dependsOn="1">
+      <task>Analyze research data to form investment memo</task>
+      <steps>
+        <step input="company_research">Analyze research data to form investment memo</step>
+        <step output="investment_memo">Generate comprehensive investment memo document</step>
       </steps>
     </node>
   </workflow>
@@ -281,8 +298,15 @@ Toolkit 1, Toolkit 2, Toolkit 3
 ## Example
 User: I want to convert the JD's in my google drive to linkedin format
 Output result:
-LINKEDIN, GOOGLE_DRIVE
+GOOGLE_DRIVE
 
+## Example
+User: I want to convert the JD's into linkedin format
+Output result:
+USER_INPUT
 
-
+## Example
+User: Help me collect the latest AI news, summarize it, and send it to the "AI news information" group chat on WeChat.
+Output result:
+Browser, TextProcessor, Computer
 `;

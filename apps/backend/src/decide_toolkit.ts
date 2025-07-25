@@ -8,7 +8,7 @@ const openai = new OpenAI({
 
 export const decide_toolkit = async (user_prompt: string) => {
 
-    const toolkits = "GMAIL, GOOGLE_DRIVE, GOOGLE_SPREADSHEET, GITHUB, BRAVE_SEARCH";
+    const toolkits = "GMAIL, GOOGLE_DRIVE, GOOGLE_SPREADSHEET, GITHUB, BRAVE_SEARCH, USER_INPUT";
 
     const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
