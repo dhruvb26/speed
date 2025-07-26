@@ -1,174 +1,154 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
-import {
-  sendMessage,
-  getChatHistory,
-  type LangGraphMessage,
-  type LangChainMessage,
-} from '@/actions/chat'
+import { useEffect, useRef, useState } from 'react'
+import { useChat } from '@/hooks/use-chat'
 import { cn } from '@/lib/utils'
-import Loader from '@/components/global/loader'
 import { MessageForm } from '@/components/ui/message-form'
-
-interface Message {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: Date
-}
-
-const convertLangGraphMessages = (
-  lgMessages: LangGraphMessage[]
-): Message[] => {
-  return lgMessages.map((lgMessage) => {
-    const isAI = lgMessage.id && lgMessage.id[2] === 'AIMessage'
-    return {
-      id: lgMessage.kwargs.id,
-      role: isAI ? 'assistant' : 'user',
-      content: lgMessage.kwargs.content,
-      timestamp: new Date(),
-    } as Message
-  })
-}
-
-const convertLangChainMessages = (
-  lcMessages: LangChainMessage[]
-): Message[] => {
-  return lcMessages.map((m) => {
-    const isAI = Array.isArray(m.id) && m.id[2] === 'AIMessage'
-    return {
-      id: m.kwargs.id,
-      role: isAI ? 'assistant' : 'user',
-      content: m.kwargs.content,
-      timestamp: new Date(),
-    }
-  })
-}
+import { TextShimmer } from '@/components/ui/text-shimmer'
+import { ToolCallDropdown } from '@/components/ui/tool-call-dropdown'
+import Loader from '@/components/global/loader'
+import { useChatStore } from '@/store/chat-store'
 
 export default function ChatPage() {
   const params = useParams()
   const chatId = params.id as string
-  const [isLoadingHistory, setIsLoadingHistory] = useState(true)
-  const [messages, setMessages] = useState<Message[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isFetchingHistory, setIsFetchingHistory] = useState(false)
 
-  const displayMessages = messages
+  const getInitialMessage = useChatStore((state) => state.getInitialMessage)
+  const clearInitialMessage = useChatStore((state) => state.clearInitialMessage)
+
+  const {
+    messages,
+    streamingContent,
+    isStreaming,
+    sendMessage,
+    loadChatHistory,
+  } = useChat({ threadId: chatId })
 
   useEffect(() => {
-    const loadChatHistory = async () => {
-      setIsLoadingHistory(true)
-      try {
-        const historyResult = await getChatHistory(chatId)
-
-        if (historyResult.success && historyResult.data) {
-          const convertedMessages = convertLangGraphMessages(
-            historyResult.data.messages
-          )
-          setMessages(convertedMessages)
+    if (chatId && messages.length === 0) {
+      const storedMessage = getInitialMessage(chatId)
+      if (storedMessage) {
+        clearInitialMessage(chatId)
+        sendMessage(storedMessage)
+      } else {
+        const fetchHistory = async () => {
+          setIsFetchingHistory(true)
+          await loadChatHistory(chatId)
+          setIsFetchingHistory(false)
         }
-      } catch (error) {
-        console.error('Error loading chat history:', error)
-      } finally {
-        setIsLoadingHistory(false)
+        fetchHistory()
       }
     }
+  }, [
+    chatId,
+    messages.length,
+    getInitialMessage,
+    clearInitialMessage,
+    sendMessage,
+    loadChatHistory,
+  ])
 
-    loadChatHistory()
-  }, [chatId])
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, streamingContent])
 
   const handleSubmit = async (userMessage: string) => {
-    setIsLoading(true)
-
-    const optimisticUserMessage: Message = {
-      id: `temp-${Date.now()}`,
-      role: 'user',
-      content: userMessage,
-      timestamp: new Date(),
-    }
-
-    setMessages((prev) => [...prev, optimisticUserMessage])
-
     try {
-      const result = await sendMessage(userMessage, chatId)
-
-      if (result.success && result.data) {
-        const converted = convertLangChainMessages(result.data.messages)
-        setMessages(converted)
-      } else {
-        console.error('Error sending message:', result.error)
-        setMessages((prev) =>
-          prev.filter((m) => m.id !== optimisticUserMessage.id)
-        )
-        throw new Error(result.error)
-      }
+      await sendMessage(userMessage)
     } catch (error) {
       console.error('Error in chat submission:', error)
-      setMessages((prev) =>
-        prev.filter((m) => m.id !== optimisticUserMessage.id)
-      )
       throw error
-    } finally {
-      setIsLoading(false)
     }
   }
 
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages])
-
-  if (isLoadingHistory) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader />
-      </div>
+  const findToolResult = (toolCallId: string) => {
+    return messages.find(
+      (msg) => msg.role === 'tool_result' && msg.toolResult?.id === toolCallId
     )
   }
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen max-w-7xl mx-auto">
       <div className="flex-1 overflow-y-auto py-8 space-y-4 px-24 custom-scrollbar">
-        {displayMessages.map((message) => (
-          <div
-            key={message.id}
-            className={cn(
-              'flex text-sm',
-              message.role === 'user' ? 'justify-end' : 'justify-start'
-            )}
-          >
-            <div
-              className={cn(
-                'rounded-xl p-2',
-                message.role === 'user'
-                  ? 'bg-primary text-primary-foreground max-w-[80%]'
-                  : 'max-w-[60%]'
-              )}
-            >
-              <p className="whitespace-pre-wrap break-words">
-                {message.content}
-              </p>
-            </div>
+        {isFetchingHistory ? (
+          <div className="flex justify-center items-center h-full">
+            <Loader />
           </div>
-        ))}
+        ) : (
+          <>
+            {messages
+              .filter((message) => message.role !== 'tool_result')
+              .map((message) => {
+                if (message.role === 'tool_call_chunk' && message.toolCall) {
+                  const toolResultMessage = findToolResult(
+                    message.toolCall.id ?? ''
+                  )
 
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="flex items-center gap-2 px-2">
-              <Loader className="text-muted-foreground" />
-            </div>
-          </div>
+                  return (
+                    <div key={message.id} className="flex justify-start">
+                      <ToolCallDropdown
+                        toolCall={message.toolCall}
+                        toolResult={toolResultMessage?.toolResult}
+                        triggerContent={message.content}
+                      />
+                    </div>
+                  )
+                }
+
+                return (
+                  <div
+                    key={message.id}
+                    className={cn(
+                      'flex text-sm',
+                      message.role === 'user' ? 'justify-end' : 'justify-start'
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'rounded-xl p-2',
+                        message.role === 'user'
+                          ? 'bg-primary text-primary-foreground max-w-[80%]'
+                          : 'max-w-[60%]'
+                      )}
+                    >
+                      <p className="whitespace-pre-wrap break-words">
+                        {message.content}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+
+            {isStreaming && streamingContent === '' && (
+              <div className="flex justify-start">
+                <div className="flex items-center gap-2 px-2">
+                  <TextShimmer children="Thinking" />
+                </div>
+              </div>
+            )}
+
+            {isStreaming && streamingContent && (
+              <div className="flex justify-start">
+                <div className="rounded-xl p-2 max-w-[60%]">
+                  <p className="whitespace-pre-wrap break-words text-sm">
+                    {streamingContent}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       <div className="bg-background/95 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60 p-4">
         <MessageForm
           onSubmit={handleSubmit}
-          isLoading={isLoading}
+          isLoading={isFetchingHistory}
           className="max-w-4xl mx-auto"
         />
       </div>

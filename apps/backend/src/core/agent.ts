@@ -17,10 +17,7 @@ interface InvokeAgentConfig {
   };
 }
 
-export async function invokeAgent(
-  input: InvokeAgentInput,
-  config: InvokeAgentConfig,
-) {
+async function createAgentBuilder() {
   const { Pool } = pg;
 
   const pool = new Pool({
@@ -28,7 +25,6 @@ export async function invokeAgent(
   });
 
   const checkpointer = new PostgresSaver(pool);
-
   await checkpointer.setup();
 
   const llm = new ChatOpenAI({
@@ -80,13 +76,10 @@ export async function invokeAgent(
   );
 
   const tools = [add, multiply, divide];
-  const toolsByName = Object.fromEntries(
-    tools.map((tool) => [tool.name, tool])
-  );
   const llmWithTools = llm.bindTools(tools);
+
   // Nodes
   async function llmCall(state: typeof MessagesAnnotation.State) {
-    // LLM decides whether to call a tool or not
     const result = await llmWithTools.invoke([
       {
         role: "system",
@@ -103,12 +96,11 @@ export async function invokeAgent(
 
   const toolNode = new ToolNode(tools);
 
-  // Conditional edge function to route to the tool node or end
+  // Conditional edge function
   function shouldContinue(state: typeof MessagesAnnotation.State) {
     const messages = state.messages;
     const lastMessage = messages.at(-1);
 
-    // If the LLM makes a tool call, then perform an action
     if (
       lastMessage &&
       "tool_calls" in lastMessage &&
@@ -117,25 +109,30 @@ export async function invokeAgent(
     ) {
       return "Action";
     }
-    // Otherwise, we stop (reply to the user)
     return "__end__";
   }
 
   // Build workflow
-  const agentBuilder = new StateGraph(MessagesAnnotation)
+  return new StateGraph(MessagesAnnotation)
     .addNode("llmCall", llmCall)
     .addNode("tools", toolNode)
-    // Add edges to connect nodes
     .addEdge("__start__", "llmCall")
     .addConditionalEdges("llmCall", shouldContinue, {
-      // Name returned by shouldContinue : Name of next node to visit
       Action: "tools",
       __end__: "__end__",
     })
     .addEdge("tools", "llmCall")
     .compile({ checkpointer });
+}
 
-  const result = await agentBuilder.invoke(input, config);
+export async function invokeAgentStream(
+  input: InvokeAgentInput,
+  config: InvokeAgentConfig
+) {
+  const agentBuilder = await createAgentBuilder();
 
-  return result;
+  return agentBuilder.stream(input, {
+    streamMode: "messages",
+    ...config,
+  });
 }

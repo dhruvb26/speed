@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { invokeAgent } from "@/core/agent";
+import { invokeAgentStream } from "@/core/agent";
 import { getHistory } from "@/core/checkpoint";
 import { createDb } from "@/db";
 import {
@@ -16,14 +16,12 @@ const chat = new Hono();
 chat.post("/agent", async (c) => {
   try {
     const { messages, config, userId } = await c.req.json();
-    const result = await invokeAgent(
-      { messages },
-      {
-        configurable: {
-          thread_id: config.thread_id,
-        },
-      }
-    );
+
+    c.header("Content-Type", "text/event-stream");
+    c.header("Cache-Control", "no-cache");
+    c.header("Connection", "keep-alive");
+    c.header("Access-Control-Allow-Origin", "*");
+    c.header("Access-Control-Allow-Headers", "Cache-Control");
 
     const db = createDb();
 
@@ -40,12 +38,60 @@ chat.post("/agent", async (c) => {
       });
     }
 
-    const response: Result<typeof result> = {
-      data: result,
-      error: null,
-    };
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          const agentStream = await invokeAgentStream(
+            { messages },
+            {
+              configurable: {
+                thread_id: config.thread_id,
+              },
+            }
+          );
 
-    return c.json(response);
+          for await (const [message, metadata] of agentStream) {
+            const data = JSON.stringify({
+              type: "stream",
+              message: message,
+              metadata,
+              timestamp: new Date().toISOString(),
+            });
+
+            controller.enqueue(new TextEncoder().encode(`data: ${data}\n\n`));
+          }
+
+          controller.enqueue(
+            new TextEncoder().encode(
+              `data: ${JSON.stringify({ type: "complete" })}\n\n`
+            )
+          );
+          controller.close();
+        } catch (error) {
+          const errorData = JSON.stringify({
+            type: "error",
+            message:
+              error instanceof Error
+                ? error.message
+                : "An unknown error occurred",
+          });
+          controller.enqueue(
+            new TextEncoder().encode(`data: ${errorData}\n\n`)
+          );
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Cache-Control",
+      },
+    });
   } catch (error) {
     const response: Result<null, string> = {
       data: null,

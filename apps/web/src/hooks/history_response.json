@@ -1,0 +1,1118 @@
+{
+  "data": {
+    "threadId": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+    "checkpointCount": 8,
+    "checkpoints": [
+      {
+        "checkpointId": "1f0691a2-4177-6a70-8006-dfb338f45696",
+        "timestamp": "2025-07-25T05:42:24.407Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-4177-6a70-8006-dfb338f45696"
+          }
+        },
+        "values": {
+          "messages": [
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {},
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 104,
+                    "completion_tokens": 10,
+                    "total_tokens": 114,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [],
+                "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+                "tool_calls": [],
+                "invalid_tool_calls": []
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "add 3 and 5",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "b79ca8c1-5db1-4d77-b565-26d26217ab8d"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "",
+                "additional_kwargs": {
+                  "tool_calls": [
+                    {
+                      "index": 0,
+                      "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                      "type": "function",
+                      "function": {
+                        "name": "add",
+                        "arguments": "{\"a\":3,\"b\":5}"
+                      }
+                    }
+                  ]
+                },
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 127,
+                    "completion_tokens": 17,
+                    "total_tokens": 144,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [
+                  {
+                    "name": "add",
+                    "args": "{\"a\":3,\"b\":5}",
+                    "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                    "index": 0,
+                    "type": "tool_call_chunk"
+                  }
+                ],
+                "id": "chatcmpl-Bx5UFI8tWQGgEi6IrE5iTHOcTqJAO",
+                "tool_calls": [
+                  {
+                    "name": "add",
+                    "args": {
+                      "a": 3,
+                      "b": 5
+                    },
+                    "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                    "type": "tool_call"
+                  }
+                ],
+                "invalid_tool_calls": []
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "ToolMessage"],
+              "kwargs": {
+                "content": "8",
+                "tool_call_id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                "name": "add",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "6376e987-7aa4-4cf9-9c74-e639096aa342"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "The sum of 3 and 5 is 8.",
+                "additional_kwargs": {},
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 152,
+                    "completion_tokens": 13,
+                    "total_tokens": 165,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [],
+                "id": "chatcmpl-Bx5UF4ACEqgODZQwLioX74xU8ReGO",
+                "tool_calls": [],
+                "invalid_tool_calls": []
+              }
+            }
+          ]
+        },
+        "metadata": {
+          "step": 6,
+          "source": "loop",
+          "writes": {
+            "llmCall": {
+              "messages": [
+                {
+                  "lc": 1,
+                  "type": "constructor",
+                  "id": ["langchain_core", "messages", "AIMessageChunk"],
+                  "kwargs": {
+                    "id": "chatcmpl-Bx5UF4ACEqgODZQwLioX74xU8ReGO",
+                    "content": "The sum of 3 and 5 is 8.",
+                    "tool_calls": [],
+                    "tool_call_chunks": [],
+                    "additional_kwargs": {},
+                    "response_metadata": {
+                      "usage": {
+                        "total_tokens": 165,
+                        "prompt_tokens": 152,
+                        "completion_tokens": 13,
+                        "prompt_tokens_details": {
+                          "audio_tokens": 0,
+                          "cached_tokens": 0
+                        },
+                        "completion_tokens_details": {
+                          "audio_tokens": 0,
+                          "reasoning_tokens": 0,
+                          "accepted_prediction_tokens": 0,
+                          "rejected_prediction_tokens": 0
+                        }
+                      }
+                    },
+                    "invalid_tool_calls": []
+                  }
+                }
+              ]
+            }
+          },
+          "parents": {}
+        },
+        "parentConfig": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-3b64-67a0-8005-c49de1bf52f0"
+          }
+        },
+        "pendingSends": []
+      },
+      {
+        "checkpointId": "1f0691a2-3b64-67a0-8005-c49de1bf52f0",
+        "timestamp": "2025-07-25T05:42:23.770Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-3b64-67a0-8005-c49de1bf52f0"
+          }
+        },
+        "values": {
+          "messages": [
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {},
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 104,
+                    "completion_tokens": 10,
+                    "total_tokens": 114,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [],
+                "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+                "tool_calls": [],
+                "invalid_tool_calls": []
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "add 3 and 5",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "b79ca8c1-5db1-4d77-b565-26d26217ab8d"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "",
+                "additional_kwargs": {
+                  "tool_calls": [
+                    {
+                      "index": 0,
+                      "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                      "type": "function",
+                      "function": {
+                        "name": "add",
+                        "arguments": "{\"a\":3,\"b\":5}"
+                      }
+                    }
+                  ]
+                },
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 127,
+                    "completion_tokens": 17,
+                    "total_tokens": 144,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [
+                  {
+                    "name": "add",
+                    "args": "{\"a\":3,\"b\":5}",
+                    "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                    "index": 0,
+                    "type": "tool_call_chunk"
+                  }
+                ],
+                "id": "chatcmpl-Bx5UFI8tWQGgEi6IrE5iTHOcTqJAO",
+                "tool_calls": [
+                  {
+                    "name": "add",
+                    "args": {
+                      "a": 3,
+                      "b": 5
+                    },
+                    "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                    "type": "tool_call"
+                  }
+                ],
+                "invalid_tool_calls": []
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "ToolMessage"],
+              "kwargs": {
+                "content": "8",
+                "tool_call_id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                "name": "add",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "6376e987-7aa4-4cf9-9c74-e639096aa342"
+              }
+            }
+          ],
+          "branch:to:llmCall": null
+        },
+        "metadata": {
+          "step": 5,
+          "source": "loop",
+          "writes": {
+            "tools": {
+              "messages": [
+                {
+                  "lc": 1,
+                  "type": "constructor",
+                  "id": ["langchain_core", "messages", "ToolMessage"],
+                  "kwargs": {
+                    "id": "6376e987-7aa4-4cf9-9c74-e639096aa342",
+                    "name": "add",
+                    "content": "8",
+                    "tool_call_id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                    "additional_kwargs": {},
+                    "response_metadata": {}
+                  }
+                }
+              ]
+            }
+          },
+          "parents": {}
+        },
+        "parentConfig": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-3b53-6630-8004-62e326a0812b"
+          }
+        },
+        "pendingSends": []
+      },
+      {
+        "checkpointId": "1f0691a2-3b53-6630-8004-62e326a0812b",
+        "timestamp": "2025-07-25T05:42:23.764Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-3b53-6630-8004-62e326a0812b"
+          }
+        },
+        "values": {
+          "messages": [
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {},
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 104,
+                    "completion_tokens": 10,
+                    "total_tokens": 114,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [],
+                "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+                "tool_calls": [],
+                "invalid_tool_calls": []
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "add 3 and 5",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "b79ca8c1-5db1-4d77-b565-26d26217ab8d"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "",
+                "additional_kwargs": {
+                  "tool_calls": [
+                    {
+                      "index": 0,
+                      "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                      "type": "function",
+                      "function": {
+                        "name": "add",
+                        "arguments": "{\"a\":3,\"b\":5}"
+                      }
+                    }
+                  ]
+                },
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 127,
+                    "completion_tokens": 17,
+                    "total_tokens": 144,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [
+                  {
+                    "name": "add",
+                    "args": "{\"a\":3,\"b\":5}",
+                    "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                    "index": 0,
+                    "type": "tool_call_chunk"
+                  }
+                ],
+                "id": "chatcmpl-Bx5UFI8tWQGgEi6IrE5iTHOcTqJAO",
+                "tool_calls": [
+                  {
+                    "name": "add",
+                    "args": {
+                      "a": 3,
+                      "b": 5
+                    },
+                    "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                    "type": "tool_call"
+                  }
+                ],
+                "invalid_tool_calls": []
+              }
+            }
+          ],
+          "branch:to:tools": "llmCall"
+        },
+        "metadata": {
+          "step": 4,
+          "source": "loop",
+          "writes": {
+            "llmCall": {
+              "messages": [
+                {
+                  "lc": 1,
+                  "type": "constructor",
+                  "id": ["langchain_core", "messages", "AIMessageChunk"],
+                  "kwargs": {
+                    "id": "chatcmpl-Bx5UFI8tWQGgEi6IrE5iTHOcTqJAO",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "add",
+                        "args": {
+                          "a": 3,
+                          "b": 5
+                        },
+                        "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                        "type": "tool_call"
+                      }
+                    ],
+                    "tool_call_chunks": [
+                      {
+                        "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                        "args": "{\"a\":3,\"b\":5}",
+                        "name": "add",
+                        "type": "tool_call_chunk",
+                        "index": 0
+                      }
+                    ],
+                    "additional_kwargs": {
+                      "tool_calls": [
+                        {
+                          "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                          "type": "function",
+                          "index": 0,
+                          "function": {
+                            "name": "add",
+                            "arguments": "{\"a\":3,\"b\":5}"
+                          }
+                        }
+                      ]
+                    },
+                    "response_metadata": {
+                      "usage": {
+                        "total_tokens": 144,
+                        "prompt_tokens": 127,
+                        "completion_tokens": 17,
+                        "prompt_tokens_details": {
+                          "audio_tokens": 0,
+                          "cached_tokens": 0
+                        },
+                        "completion_tokens_details": {
+                          "audio_tokens": 0,
+                          "reasoning_tokens": 0,
+                          "accepted_prediction_tokens": 0,
+                          "rejected_prediction_tokens": 0
+                        }
+                      }
+                    },
+                    "invalid_tool_calls": []
+                  }
+                }
+              ]
+            }
+          },
+          "parents": {}
+        },
+        "parentConfig": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-33db-6c40-8003-802d1899937f"
+          }
+        },
+        "pendingSends": []
+      },
+      {
+        "checkpointId": "1f0691a2-33db-6c40-8003-802d1899937f",
+        "timestamp": "2025-07-25T05:42:22.980Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-33db-6c40-8003-802d1899937f"
+          }
+        },
+        "values": {
+          "messages": [
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {},
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 104,
+                    "completion_tokens": 10,
+                    "total_tokens": 114,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [],
+                "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+                "tool_calls": [],
+                "invalid_tool_calls": []
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "add 3 and 5",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "b79ca8c1-5db1-4d77-b565-26d26217ab8d"
+              }
+            }
+          ],
+          "branch:to:llmCall": null
+        },
+        "metadata": {
+          "step": 3,
+          "source": "loop",
+          "writes": null,
+          "parents": {}
+        },
+        "parentConfig": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-33cd-61e0-8002-2aa0d2d6f5d4"
+          }
+        },
+        "pendingSends": []
+      },
+      {
+        "checkpointId": "1f0691a2-33cd-61e0-8002-2aa0d2d6f5d4",
+        "timestamp": "2025-07-25T05:42:22.974Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-33cd-61e0-8002-2aa0d2d6f5d4"
+          }
+        },
+        "values": {
+          "messages": [
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {},
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 104,
+                    "completion_tokens": 10,
+                    "total_tokens": 114,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [],
+                "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+                "tool_calls": [],
+                "invalid_tool_calls": []
+              }
+            }
+          ],
+          "__start__": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "add 3 and 5"
+              }
+            ]
+          }
+        },
+        "metadata": {
+          "step": 2,
+          "source": "input",
+          "writes": {
+            "__start__": {
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "add 3 and 5"
+                }
+              ]
+            }
+          },
+          "parents": {}
+        },
+        "parentConfig": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-0f5e-6f20-8001-635ca3255a55"
+          }
+        },
+        "pendingSends": []
+      },
+      {
+        "checkpointId": "1f0691a2-0f5e-6f20-8001-635ca3255a55",
+        "timestamp": "2025-07-25T05:42:19.154Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-0f5e-6f20-8001-635ca3255a55"
+          }
+        },
+        "values": {
+          "messages": [
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+              }
+            },
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "AIMessageChunk"],
+              "kwargs": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {},
+                "response_metadata": {
+                  "usage": {
+                    "prompt_tokens": 104,
+                    "completion_tokens": 10,
+                    "total_tokens": 114,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0,
+                      "audio_tokens": 0
+                    },
+                    "completion_tokens_details": {
+                      "reasoning_tokens": 0,
+                      "audio_tokens": 0,
+                      "accepted_prediction_tokens": 0,
+                      "rejected_prediction_tokens": 0
+                    }
+                  }
+                },
+                "tool_call_chunks": [],
+                "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+                "tool_calls": [],
+                "invalid_tool_calls": []
+              }
+            }
+          ]
+        },
+        "metadata": {
+          "step": 1,
+          "source": "loop",
+          "writes": {
+            "llmCall": {
+              "messages": [
+                {
+                  "lc": 1,
+                  "type": "constructor",
+                  "id": ["langchain_core", "messages", "AIMessageChunk"],
+                  "kwargs": {
+                    "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+                    "content": "Hello! How can I assist you today?",
+                    "tool_calls": [],
+                    "tool_call_chunks": [],
+                    "additional_kwargs": {},
+                    "response_metadata": {
+                      "usage": {
+                        "total_tokens": 114,
+                        "prompt_tokens": 104,
+                        "completion_tokens": 10,
+                        "prompt_tokens_details": {
+                          "audio_tokens": 0,
+                          "cached_tokens": 0
+                        },
+                        "completion_tokens_details": {
+                          "audio_tokens": 0,
+                          "reasoning_tokens": 0,
+                          "accepted_prediction_tokens": 0,
+                          "rejected_prediction_tokens": 0
+                        }
+                      }
+                    },
+                    "invalid_tool_calls": []
+                  }
+                }
+              ]
+            }
+          },
+          "parents": {}
+        },
+        "parentConfig": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-0837-6e40-8000-6758dcd02de0"
+          }
+        },
+        "pendingSends": []
+      },
+      {
+        "checkpointId": "1f0691a2-0837-6e40-8000-6758dcd02de0",
+        "timestamp": "2025-07-25T05:42:18.404Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-0837-6e40-8000-6758dcd02de0"
+          }
+        },
+        "values": {
+          "messages": [
+            {
+              "lc": 1,
+              "type": "constructor",
+              "id": ["langchain_core", "messages", "HumanMessage"],
+              "kwargs": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+              }
+            }
+          ],
+          "branch:to:llmCall": null
+        },
+        "metadata": {
+          "step": 0,
+          "source": "loop",
+          "writes": null,
+          "parents": {}
+        },
+        "parentConfig": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-082b-6af0-ffff-5be6c7eca8ec"
+          }
+        },
+        "pendingSends": []
+      },
+      {
+        "checkpointId": "1f0691a2-082b-6af0-ffff-5be6c7eca8ec",
+        "timestamp": "2025-07-25T05:42:18.399Z",
+        "config": {
+          "configurable": {
+            "thread_id": "9d4ef563-ccac-4ed3-9792-2e7e2f17f819",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f0691a2-082b-6af0-ffff-5be6c7eca8ec"
+          }
+        },
+        "values": {
+          "__start__": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "hi"
+              }
+            ]
+          }
+        },
+        "metadata": {
+          "step": -1,
+          "source": "input",
+          "writes": {
+            "__start__": {
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "hi"
+                }
+              ]
+            }
+          },
+          "parents": {}
+        },
+        "pendingSends": []
+      }
+    ],
+    "messagesCount": 6,
+    "messages": [
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": ["langchain_core", "messages", "HumanMessage"],
+        "kwargs": {
+          "content": "hi",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "id": "0c626eba-1c5a-40b9-812c-96a1ce399df2"
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": ["langchain_core", "messages", "AIMessageChunk"],
+        "kwargs": {
+          "content": "Hello! How can I assist you today?",
+          "additional_kwargs": {},
+          "response_metadata": {
+            "usage": {
+              "prompt_tokens": 104,
+              "completion_tokens": 10,
+              "total_tokens": 114,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "audio_tokens": 0
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0,
+                "audio_tokens": 0,
+                "accepted_prediction_tokens": 0,
+                "rejected_prediction_tokens": 0
+              }
+            }
+          },
+          "tool_call_chunks": [],
+          "id": "chatcmpl-Bx5UAobUWkaKOmBuYs2FCMdIKcuK6",
+          "tool_calls": [],
+          "invalid_tool_calls": []
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": ["langchain_core", "messages", "HumanMessage"],
+        "kwargs": {
+          "content": "add 3 and 5",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "id": "b79ca8c1-5db1-4d77-b565-26d26217ab8d"
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": ["langchain_core", "messages", "AIMessageChunk"],
+        "kwargs": {
+          "content": "",
+          "additional_kwargs": {
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+                "type": "function",
+                "function": {
+                  "name": "add",
+                  "arguments": "{\"a\":3,\"b\":5}"
+                }
+              }
+            ]
+          },
+          "response_metadata": {
+            "usage": {
+              "prompt_tokens": 127,
+              "completion_tokens": 17,
+              "total_tokens": 144,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "audio_tokens": 0
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0,
+                "audio_tokens": 0,
+                "accepted_prediction_tokens": 0,
+                "rejected_prediction_tokens": 0
+              }
+            }
+          },
+          "tool_call_chunks": [
+            {
+              "name": "add",
+              "args": "{\"a\":3,\"b\":5}",
+              "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+              "index": 0,
+              "type": "tool_call_chunk"
+            }
+          ],
+          "id": "chatcmpl-Bx5UFI8tWQGgEi6IrE5iTHOcTqJAO",
+          "tool_calls": [
+            {
+              "name": "add",
+              "args": {
+                "a": 3,
+                "b": 5
+              },
+              "id": "call_oyr5WKjQokCNxveTErEGJI8V",
+              "type": "tool_call"
+            }
+          ],
+          "invalid_tool_calls": []
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": ["langchain_core", "messages", "ToolMessage"],
+        "kwargs": {
+          "content": "8",
+          "tool_call_id": "call_oyr5WKjQokCNxveTErEGJI8V",
+          "name": "add",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "id": "6376e987-7aa4-4cf9-9c74-e639096aa342"
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": ["langchain_core", "messages", "AIMessageChunk"],
+        "kwargs": {
+          "content": "The sum of 3 and 5 is 8.",
+          "additional_kwargs": {},
+          "response_metadata": {
+            "usage": {
+              "prompt_tokens": 152,
+              "completion_tokens": 13,
+              "total_tokens": 165,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "audio_tokens": 0
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0,
+                "audio_tokens": 0,
+                "accepted_prediction_tokens": 0,
+                "rejected_prediction_tokens": 0
+              }
+            }
+          },
+          "tool_call_chunks": [],
+          "id": "chatcmpl-Bx5UF4ACEqgODZQwLioX74xU8ReGO",
+          "tool_calls": [],
+          "invalid_tool_calls": []
+        }
+      }
+    ]
+  },
+  "error": null
+}

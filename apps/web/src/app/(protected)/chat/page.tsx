@@ -1,39 +1,22 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
+import { useState } from 'react'
 import { v4 as uuid } from 'uuid'
-import { sendMessage } from '@/actions/chat'
 import { MessageForm } from '@/components/ui/message-form'
+import { useChatStore } from '@/store/chat-store'
 
 export default function Chat() {
-  const router = useRouter()
-  const { user } = useUser()
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const setInitialMessage = useChatStore((state) => state.setInitialMessage)
 
   const handleSubmit = async (message: string) => {
-    if (!user?.id) return
-
     setIsLoading(true)
-
-    try {
-      const threadId = uuid()
-
-      const result = await sendMessage(message, threadId)
-
-      if (result.success) {
-        router.push(`/chat/${threadId}`)
-      } else {
-        console.error('Error sending message:', result.error)
-        throw new Error(result.error)
-      }
-    } catch (error) {
-      console.error('Error in chat submission:', error)
-      throw error
-    } finally {
-      setIsLoading(false)
-    }
+    const threadId = uuid()
+    setInitialMessage(threadId, message)
+    router.push(`/chat/${threadId}`)
+    setIsLoading(false)
   }
 
   return (

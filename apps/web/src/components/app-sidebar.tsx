@@ -19,7 +19,8 @@ import { NavMain } from '@/components/nav-main'
 import { TeamSwitcher } from '@/components/team-switcher'
 import UsageCard from '@/components/global/usage-card'
 import { currentUser } from '@clerk/nextjs/server'
-import { getUserChats, type UserChat } from '@/actions/chat'
+import { getUserChats } from '@/actions/chat'
+import { UserChat } from '@/types'
 
 const data = {
   main: [
