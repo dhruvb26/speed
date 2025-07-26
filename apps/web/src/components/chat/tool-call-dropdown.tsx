@@ -72,12 +72,12 @@ export function ToolCallDropdown({
             </div>
           )}
 
-          {/* {toolResult && (
+          {toolResult && (
             <div className="flex items-start gap-2 text-xs">
               <span className="text-muted-foreground shrink-0">Result:</span>
               <span className="break-words max-w-sm">{toolResult.content}</span>
             </div>
-          )} */}
+          )}
         </div>
       )}
     </div>

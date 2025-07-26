@@ -14,7 +14,7 @@ interface ToolCallStore {
   clearAllToolCalls: () => void
 }
 
-export const useToolCallStore = create<ToolCallStore>((set, get) => ({
+export const useToolCallStore = create<ToolCallStore>((set) => ({
   streamingToolCalls: {},
 
   updateToolCall: (toolCall: StreamingToolCall) => {
@@ -28,7 +28,8 @@ export const useToolCallStore = create<ToolCallStore>((set, get) => ({
 
   clearToolCall: (id: string) => {
     set((state) => {
-      const { [id]: removed, ...rest } = state.streamingToolCalls
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [id]: _, ...rest } = state.streamingToolCalls
       return { streamingToolCalls: rest }
     })
   },

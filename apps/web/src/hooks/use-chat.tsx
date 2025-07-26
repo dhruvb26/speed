@@ -352,7 +352,7 @@ export const useChat = (options: UseChatOptions) => {
         throw error
       }
     },
-    [user?.id, threadId, loadChatHistory]
+    [user?.id, threadId, loadChatHistory, clearAllToolCalls, updateToolCall]
   )
 
   return {

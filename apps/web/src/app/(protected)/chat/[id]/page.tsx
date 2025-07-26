@@ -6,7 +6,8 @@ import { useChat } from '@/hooks/use-chat'
 import { cn } from '@/lib/utils'
 import { MessageForm } from '@/components/ui/message-form'
 import { TextShimmer } from '@/components/ui/text-shimmer'
-import { ToolCallDropdown } from '@/components/ui/tool-call-dropdown'
+import { ToolCallDropdown } from '@/components/chat/tool-call-dropdown'
+import AssistantMessageRenderer from '@/components/chat/assistant-message-renderer'
 import Loader from '@/components/global/loader'
 import { useChatStore } from '@/store/chat-store'
 
@@ -106,18 +107,17 @@ export default function ChatPage() {
                       message.role === 'user' ? 'justify-end' : 'justify-start'
                     )}
                   >
-                    <div
-                      className={cn(
-                        'rounded-xl p-2',
-                        message.role === 'user'
-                          ? 'bg-primary text-primary-foreground max-w-[80%]'
-                          : 'max-w-[60%]'
-                      )}
-                    >
-                      <p className="whitespace-pre-wrap break-words">
-                        {message.content}
-                      </p>
-                    </div>
+                    {message.role === 'user' ? (
+                      <div className="bg-primary text-primary-foreground max-w-[80%] rounded-xl p-2">
+                        <p className="whitespace-pre-wrap break-words">
+                          {message.content}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="max-w-[70%]">
+                        <AssistantMessageRenderer content={message.content} />
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -125,17 +125,15 @@ export default function ChatPage() {
             {isStreaming && streamingContent === '' && (
               <div className="flex justify-start">
                 <div className="flex items-center gap-2 px-2">
-                  <TextShimmer children="Thinking" />
+                  <TextShimmer>Thinking</TextShimmer>
                 </div>
               </div>
             )}
 
             {isStreaming && streamingContent && (
               <div className="flex justify-start">
-                <div className="rounded-xl p-2 max-w-[60%]">
-                  <p className="whitespace-pre-wrap break-words text-sm">
-                    {streamingContent}
-                  </p>
+                <div className="max-w-[70%]">
+                  <AssistantMessageRenderer content={streamingContent} />
                 </div>
               </div>
             )}

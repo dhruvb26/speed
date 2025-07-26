@@ -232,7 +232,7 @@ export async function sendMessage(
             if (data.type === 'stream' && data.message) {
               messages.push(data.message)
             }
-          } catch (e) {
+          } catch {
             // Ignore parsing errors
           }
         }

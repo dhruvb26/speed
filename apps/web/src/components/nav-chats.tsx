@@ -163,7 +163,9 @@ export function NavChats({ chats }: NavChatsProps) {
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuAction
                       showOnHover
-                      className={`group-hover/item:bg-sidebar-accent group-hover/item:text-sidebar-accent-foreground group-hover/item:cursor-pointer pr-2`}
+                      className={
+                        'group-hover/item:bg-sidebar-accent group-hover/item:text-sidebar-accent-foreground group-hover/item:cursor-pointer pr-2'
+                      }
                     >
                       <MoreHorizontal className="text-muted-foreground" />
                       <span className="sr-only">More</span>
@@ -227,8 +229,8 @@ export function NavChats({ chats }: NavChatsProps) {
           <DialogHeader>
             <DialogTitle>Delete Chat</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{chatToDelete?.name}"? This
-              action cannot be undone.
+              Are you sure you want to delete &quot;{chatToDelete?.name}
+              &quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

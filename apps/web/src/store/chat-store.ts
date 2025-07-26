@@ -26,6 +26,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   clearInitialMessage: (threadId: string) => {
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [threadId]: removed, ...rest } = state.initialMessages
       return {
         initialMessages: rest,

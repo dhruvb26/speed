@@ -22,7 +22,7 @@ export default function Chat() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-4">
       <h1 className="text-4xl text-center mb-8">
-        Let's get you upto
+        Let&apos;s get you upto
         <span className="italic font-bold"> speed</span>
       </h1>
 
