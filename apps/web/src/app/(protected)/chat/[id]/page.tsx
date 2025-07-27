@@ -5,9 +5,11 @@ import { useState, useEffect, useRef } from 'react'
 import {
   sendMessage,
   getChatHistory,
-  type LangGraphMessage,
-  type LangChainMessage,
 } from '@/actions/chat'
+import type {
+  LangGraphMessage,
+  LangChainMessage,
+} from '@/types/chat'
 import { cn } from '@/lib/utils'
 import Loader from '@/components/global/loader'
 import { MessageForm } from '@/components/ui/message-form'
@@ -22,30 +24,63 @@ interface Message {
 const convertLangGraphMessages = (
   lgMessages: LangGraphMessage[]
 ): Message[] => {
-  return lgMessages.map((lgMessage) => {
-    const isAI = lgMessage.id && lgMessage.id[2] === 'AIMessage'
-    return {
-      id: lgMessage.kwargs.id,
-      role: isAI ? 'assistant' : 'user',
-      content: lgMessage.kwargs.content,
-      timestamp: new Date(),
-    } as Message
-  })
+  return lgMessages
+    .filter((lgMessage) => {
+      // Filter out tool calls and tool messages
+      const messageType = lgMessage.id && lgMessage.id[2]
+      const isToolMessage = messageType === 'ToolMessage'
+      const hasToolCalls = lgMessage.kwargs.tool_calls && lgMessage.kwargs.tool_calls.length > 0
+      const hasContent = lgMessage.kwargs.content && lgMessage.kwargs.content.trim() !== ''
+      
+      // Filter out tool messages and messages that are just tool calls
+      if (isToolMessage || hasToolCalls) {
+        return false
+      }
+      
+      // Only show messages with actual content
+      return hasContent
+    })
+    .map((lgMessage) => {
+      const isAI = lgMessage.id && lgMessage.id[2] === 'AIMessage'
+      return {
+        id: lgMessage.kwargs.id,
+        role: isAI ? 'assistant' : 'user',
+        content: lgMessage.kwargs.content,
+        timestamp: new Date(),
+      } as Message
+    })
 }
 
 const convertLangChainMessages = (
   lcMessages: LangChainMessage[]
 ): Message[] => {
-  return lcMessages.map((m) => {
-    const isAI = Array.isArray(m.id) && m.id[2] === 'AIMessage'
-    return {
-      id: m.kwargs.id,
-      role: isAI ? 'assistant' : 'user',
-      content: m.kwargs.content,
-      timestamp: new Date(),
-    }
-  })
+  return lcMessages
+    .filter((m) => {
+      // Filter out tool calls and tool messages
+      const messageType = Array.isArray(m.id) && m.id[2]
+      const isToolMessage = messageType === 'ToolMessage'
+      const hasToolCalls = m.kwargs.tool_calls && m.kwargs.tool_calls.length > 0
+      const hasContent = m.kwargs.content && m.kwargs.content.trim() !== ''
+      
+      // Filter out tool messages and messages that are just tool calls
+      if (isToolMessage || hasToolCalls) {
+        return false
+      }
+      
+      // Only show messages with actual content
+      return hasContent
+    })
+    .map((m) => {
+      const isAI = Array.isArray(m.id) && m.id[2] === 'AIMessage'
+      return {
+        id: m.kwargs.id,
+        role: isAI ? 'assistant' : 'user',
+        content: m.kwargs.content,
+        timestamp: new Date(),
+      }
+    })
 }
+
 
 export default function ChatPage() {
   const params = useParams()
@@ -56,6 +91,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const displayMessages = messages
+  console.log(displayMessages)
 
   useEffect(() => {
     const loadChatHistory = async () => {

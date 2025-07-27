@@ -56,7 +56,8 @@ export const composioIntegrations = pgTable("composio_integrations", {
   userId: varchar({ length: 255 })
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
-  toolkits: jsonb("toolkits").notNull().default({}),
+  connectedAccountId: varchar({ length: 255 }),
+  toolkits: text("toolkits").notNull().default(""),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

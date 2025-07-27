@@ -4,8 +4,27 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { ChatOpenAI } from "@langchain/openai";
 import type { BaseMessage } from "@langchain/core/messages";
+import { ToolMessage, AIMessage } from "@langchain/core/messages";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+import { Composio } from '@composio/core';
+import { LangchainProvider } from '@composio/langchain';
+import { authenticateUserForToolkit } from '../utils/composio_tools';
 import pg from "pg";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import "dotenv/config";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const composio = new Composio({
+  apiKey: process.env.COMPOSIO_API_KEY,
+  provider: new LangchainProvider(),
+});
+
+const tools = JSON.parse(fs.readFileSync(path.join(__dirname, "../utils/tools.json"), "utf8"));
+
 
 interface InvokeAgentInput {
   messages: BaseMessage[];
@@ -20,6 +39,7 @@ interface InvokeAgentConfig {
 export async function invokeAgent(
   input: InvokeAgentInput,
   config: InvokeAgentConfig,
+  userId: string
 ) {
   const { Pool } = pg;
 
@@ -37,53 +57,71 @@ export async function invokeAgent(
     apiKey: process.env.OPENAI_API_KEY!,
   });
 
-  const multiply = tool(
-    async ({ a, b }: { a: number; b: number }) => {
-      return a * b;
-    },
-    {
-      name: "multiply",
-      description: "Multiply two numbers together",
-      schema: z.object({
-        a: z.number().describe("first number"),
-        b: z.number().describe("second number"),
-      }),
-    }
-  );
-
-  const add = tool(
-    async ({ a, b }: { a: number; b: number }) => {
-      return a + b;
-    },
-    {
-      name: "add",
-      description: "Add two numbers together",
-      schema: z.object({
-        a: z.number().describe("first number"),
-        b: z.number().describe("second number"),
-      }),
-    }
-  );
-
-  const divide = tool(
-    async ({ a, b }: { a: number; b: number }) => {
-      return a / b;
-    },
-    {
-      name: "divide",
-      description: "Divide two numbers",
-      schema: z.object({
-        a: z.number().describe("first number"),
-        b: z.number().describe("second number"),
-      }),
-    }
-  );
-
-  const tools = [add, multiply, divide];
-  const toolsByName = Object.fromEntries(
-    tools.map((tool) => [tool.name, tool])
-  );
   const llmWithTools = llm.bindTools(tools);
+
+  // Custom tool node that handles authentication errors
+  async function customToolNode(state: typeof MessagesAnnotation.State) {
+    const messages = state.messages;
+    const lastMessage = messages.at(-1);
+
+    if (!lastMessage || !("tool_calls" in lastMessage) || !lastMessage.tool_calls) {
+      return { messages: [] };
+    }
+
+    const toolResults: ToolMessage[] = [];
+
+    // Execute tools using the default ToolNode first
+    const defaultToolNode = new ToolNode(tools);
+    const toolResult: any = await defaultToolNode.invoke(state);
+
+    // Check if any tool result contains "No connected accounts found" error
+    const resultMessages = toolResult?.messages || [];
+    if (Array.isArray(resultMessages) && resultMessages.length > 0) {
+      for (const message of resultMessages) {
+        console.log(message)
+        if (message instanceof ToolMessage && 
+            typeof message.content === 'string' &&
+            message.content.includes("Error: Tool")) {
+              const entityId = userId; 
+              const toolNameMatch = message.content.match(/Error: Tool "([^"]+)" not found/);
+              const toolName = toolNameMatch ? toolNameMatch[1] : '';
+              // Extract toolkit from tool name (e.g., "GOOGLEDRIVE_GET_ABOUT" -> "GOOGLEDRIVE")
+              const toolkit = toolName.split('_')[0];
+              console.log(toolkit)
+              
+              try {
+                  // Call the authentication function for the detected toolkit
+                  const redirectUrl = await authenticateUserForToolkit(entityId, toolkit, config.configurable.thread_id);
+                  console.log(redirectUrl)
+                  
+                  // Create a new tool message with authentication instructions
+                  const authMessage = new ToolMessage({
+                    content: `Authentication required for ${toolkit}. Please visit this URL to connect your ${toolkit.toLowerCase()} account: ${redirectUrl}. After authentication, please try your request again.`,
+                    tool_call_id: message.tool_call_id,
+                    name: message.name || "authentication_required"
+                  });
+              
+              toolResults.push(authMessage);
+              } catch (error) {
+                // If authentication setup fails, return the original error with additional context
+                const errorMessage = new ToolMessage({
+                  content: `${message.content}\n\nAdditionally, failed to set up authentication: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                  tool_call_id: message.tool_call_id,
+                  name: message.name || "error"
+                });
+                
+                toolResults.push(errorMessage);
+              }
+        } else {
+          // For successful tool calls or other errors, return as-is
+          toolResults.push(message as ToolMessage);
+        }
+      }
+    }
+
+    return { messages: toolResults };
+  }
+
   // Nodes
   async function llmCall(state: typeof MessagesAnnotation.State) {
     // LLM decides whether to call a tool or not
@@ -91,7 +129,7 @@ export async function invokeAgent(
       {
         role: "system",
         content:
-          "You are a helpful assistant tasked with performing arithmetic on a set of inputs.",
+          "You are a helpful assistant.",
       },
       ...state.messages,
     ]);
@@ -100,8 +138,6 @@ export async function invokeAgent(
       messages: [result],
     };
   }
-
-  const toolNode = new ToolNode(tools);
 
   // Conditional edge function to route to the tool node or end
   function shouldContinue(state: typeof MessagesAnnotation.State) {
@@ -124,18 +160,19 @@ export async function invokeAgent(
   // Build workflow
   const agentBuilder = new StateGraph(MessagesAnnotation)
     .addNode("llmCall", llmCall)
-    .addNode("tools", toolNode)
+    .addNode("tools", customToolNode)
     // Add edges to connect nodes
     .addEdge("__start__", "llmCall")
+    .addEdge("tools", "llmCall")
     .addConditionalEdges("llmCall", shouldContinue, {
       // Name returned by shouldContinue : Name of next node to visit
       Action: "tools",
       __end__: "__end__",
     })
-    .addEdge("tools", "llmCall")
+    
     .compile({ checkpointer });
 
   const result = await agentBuilder.invoke(input, config);
-
+  // console.log(result)
   return result;
 }
