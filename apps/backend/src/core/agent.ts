@@ -11,19 +11,14 @@ import { LangchainProvider } from '@composio/langchain';
 import { authenticateUserForToolkit } from '../utils/composio_tools';
 import pg from "pg";
 import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import "dotenv/config";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const composio = new Composio({
   apiKey: process.env.COMPOSIO_API_KEY,
   provider: new LangchainProvider(),
 });
 
-const tools = JSON.parse(fs.readFileSync(path.join(__dirname, "../utils/tools.json"), "utf8"));
+const gmailTools = await composio.tools.get("user_308BwV2pzGvbyVgD28IXAw8GTdp", { toolkits: ['GMAIL'] });
 
 
 interface InvokeAgentInput {
@@ -57,7 +52,7 @@ export async function invokeAgent(
     apiKey: process.env.OPENAI_API_KEY!,
   });
 
-  const llmWithTools = llm.bindTools(tools);
+  const llmWithTools = llm.bindTools(gmailTools);
 
   // Custom tool node that handles authentication errors
   async function customToolNode(state: typeof MessagesAnnotation.State) {
@@ -71,47 +66,42 @@ export async function invokeAgent(
     const toolResults: ToolMessage[] = [];
 
     // Execute tools using the default ToolNode first
-    const defaultToolNode = new ToolNode(tools);
+    const defaultToolNode = new ToolNode(gmailTools);
     const toolResult: any = await defaultToolNode.invoke(state);
 
     // Check if any tool result contains "No connected accounts found" error
     const resultMessages = toolResult?.messages || [];
     if (Array.isArray(resultMessages) && resultMessages.length > 0) {
       for (const message of resultMessages) {
-        console.log(message)
         if (message instanceof ToolMessage && 
             typeof message.content === 'string' &&
-            message.content.includes("Error: Tool")) {
-              const entityId = userId; 
-              const toolNameMatch = message.content.match(/Error: Tool "([^"]+)" not found/);
-              const toolName = toolNameMatch ? toolNameMatch[1] : '';
-              // Extract toolkit from tool name (e.g., "GOOGLEDRIVE_GET_ABOUT" -> "GOOGLEDRIVE")
-              const toolkit = toolName.split('_')[0];
-              console.log(toolkit)
-              
-              try {
-                  // Call the authentication function for the detected toolkit
-                  const redirectUrl = await authenticateUserForToolkit(entityId, toolkit, config.configurable.thread_id);
-                  console.log(redirectUrl)
-                  
-                  // Create a new tool message with authentication instructions
-                  const authMessage = new ToolMessage({
-                    content: `Authentication required for ${toolkit}. Please visit this URL to connect your ${toolkit.toLowerCase()} account: ${redirectUrl}. After authentication, please try your request again.`,
-                    tool_call_id: message.tool_call_id,
-                    name: message.name || "authentication_required"
-                  });
-              
-              toolResults.push(authMessage);
-              } catch (error) {
-                // If authentication setup fails, return the original error with additional context
-                const errorMessage = new ToolMessage({
-                  content: `${message.content}\n\nAdditionally, failed to set up authentication: ${error instanceof Error ? error.message : 'Unknown error'}`,
-                  tool_call_id: message.tool_call_id,
-                  name: message.name || "error"
-                });
-                
-                toolResults.push(errorMessage);
-              }
+            message.content.includes("No connected accounts found")) {
+          
+          // Extract the entityId from the original tool call or use a default
+          const entityId = userId; // This should be extracted from your user context
+          
+          try {
+            // Call the authentication function for GMAIL toolkit
+            const redirectUrl = await authenticateUserForToolkit(entityId, "GMAIL", config.configurable.thread_id);
+            
+            // Create a new tool message with authentication instructions
+            const authMessage = new ToolMessage({
+              content: `Authentication required. Please visit this URL to connect your Gmail account: ${redirectUrl}. After authentication, please try your request again.`,
+              tool_call_id: message.tool_call_id,
+              name: message.name || "authentication_required"
+            });
+            
+            toolResults.push(authMessage);
+          } catch (error) {
+            // If authentication setup fails, return the original error with additional context
+            const errorMessage = new ToolMessage({
+              content: `${message.content}\n\nAdditionally, failed to set up authentication: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              tool_call_id: message.tool_call_id,
+              name: message.name || "error"
+            });
+            
+            toolResults.push(errorMessage);
+          }
         } else {
           // For successful tool calls or other errors, return as-is
           toolResults.push(message as ToolMessage);
@@ -173,6 +163,6 @@ export async function invokeAgent(
     .compile({ checkpointer });
 
   const result = await agentBuilder.invoke(input, config);
-  // console.log(result)
+  console.log(result)
   return result;
 }
