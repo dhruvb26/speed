@@ -20,7 +20,7 @@ export default function SignUpPage() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-4">
       <div className="w-full max-w-[20rem]">
-      <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible" />
+        <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible" />
         <SignUp.Root>
           <Clerk.Loading>
             {(isGlobalLoading) => (

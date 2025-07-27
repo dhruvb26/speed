@@ -20,7 +20,7 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-4">
       <div className="w-full max-w-[20rem]">
-      <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible" />
+        <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible" />
         <SignIn.Root>
           <Clerk.Loading>
             {(isGlobalLoading) => (
@@ -62,7 +62,12 @@ export default function SignInPage() {
                     or
                   </p>
                   <Clerk.Field name="emailAddress" className="space-y-2">
-                    <Clerk.Input type="email" required asChild autoComplete="off">
+                    <Clerk.Input
+                      type="email"
+                      required
+                      asChild
+                      autoComplete="off"
+                    >
                       <Input placeholder="Email" />
                     </Clerk.Input>
                     <Clerk.FieldError className="block text-sm text-destructive" />
@@ -73,7 +78,11 @@ export default function SignInPage() {
                       <Button size="sm" disabled={isGlobalLoading}>
                         <Clerk.Loading>
                           {(isLoading) => {
-                            return isLoading ? <Loader className="text-white" /> : 'Continue'
+                            return isLoading ? (
+                              <Loader className="text-white" />
+                            ) : (
+                              'Continue'
+                            )
                           }}
                         </Clerk.Loading>
                       </Button>

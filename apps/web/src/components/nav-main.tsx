@@ -62,9 +62,7 @@ export function NavMain({
                         ),
                       }
                     )}
-                  <span>
-                    {item.title}
-                  </span>
+                  <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -58,7 +58,15 @@ const VariableFontAndCursor = ({
 
       return `'${fontVariationMapping.x.name}' ${xValue}, '${fontVariationMapping.y.name}' ${yValue}`
     },
-    []
+    [
+      containerRef,
+      fontVariationMapping.x.min,
+      fontVariationMapping.x.max,
+      fontVariationMapping.x.name,
+      fontVariationMapping.y.min,
+      fontVariationMapping.y.max,
+      fontVariationMapping.y.name,
+    ]
   )
 
   useAnimationFrame(() => {

@@ -1,87 +1,12 @@
 'use server'
 
-import { v4 as uuid } from 'uuid'
 import { env } from '@/env'
-import { auth } from '@clerk/nextjs/server'
 import type {
-  ChatMessage,
-  SendMessageRequest,
-  SendMessageResponse,
   ChatHistoryResponse,
   UserChat,
   Result,
   ApiResponse,
 } from '@/types'
-
-export async function sendMessage(
-  userMessage: string,
-  threadId?: string
-): Promise<ApiResponse<SendMessageResponse>> {
-  try {
-    const finalThreadId = threadId || uuid()
-    const { userId } = await auth()
-
-    if (!userId) {
-      return {
-        success: false,
-        error: 'User not found',
-      }
-    }
-
-    const requestBody: SendMessageRequest = {
-      messages: [
-        {
-          role: 'user',
-          content: userMessage,
-        },
-      ],
-      config: {
-        thread_id: finalThreadId,
-      },
-      userId: userId!,
-    }
-
-    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/chat/agent`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    })
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: `HTTP error! status: ${response.status}`,
-      }
-    }
-
-    const result: Result<SendMessageResponse> = await response.json()
-
-    if (result.error) {
-      return {
-        success: false,
-        error: result.error,
-      }
-    }
-
-    const finalResponseData = {
-      ...result.data!,
-      thread_id: finalThreadId,
-    }
-
-    return {
-      success: true,
-      data: finalResponseData,
-    }
-  } catch (error) {
-    console.error('Error sending message:', error)
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-    }
-  }
-}
 
 export async function getChatHistory(
   threadId: string
@@ -251,6 +176,75 @@ export async function updateChat(
     }
   } catch (error) {
     console.error('Error updating chat:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    }
+  }
+}
+
+export async function sendMessage(
+  message: string,
+  threadId: string
+): Promise<ApiResponse<{ messages: any[]; thread_id: string }>> {
+  // This is a legacy function - new code should use the useChat hook for streaming
+  try {
+    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/chat/agent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: message }],
+        config: { thread_id: threadId },
+        userId: 'legacy', // This should be replaced with actual user ID
+      }),
+    })
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: `HTTP error! status: ${response.status}`,
+      }
+    }
+
+    // For non-streaming, we'll collect all the response
+    const reader = response.body?.getReader()
+    if (!reader) {
+      throw new Error('No response body')
+    }
+
+    const decoder = new TextDecoder()
+    const messages: any[] = []
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      const chunk = decoder.decode(value, { stream: true })
+      const lines = chunk.split('\n').filter((line) => line.trim())
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const jsonStr = line.slice(6)
+            const data = JSON.parse(jsonStr)
+            if (data.type === 'stream' && data.message) {
+              messages.push(data.message)
+            }
+          } catch {
+            // Ignore parsing errors
+          }
+        }
+      }
+    }
+
+    return {
+      success: true,
+      data: { messages, thread_id: threadId },
+    }
+  } catch (error) {
+    console.error('Error sending message:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred',

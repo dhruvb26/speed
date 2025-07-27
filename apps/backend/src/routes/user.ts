@@ -3,7 +3,7 @@ import { usersTable } from "@/db/schema";
 import { Hono } from "hono";
 import { eq } from "drizzle-orm";
 import type { Result } from "@/types/api-response";
-import type { User } from "@/types/user";
+import type { User } from "@/types";
 
 const user = new Hono();
 
@@ -19,6 +19,8 @@ user.get("/:id", async (c) => {
         name: usersTable.name,
         email: usersTable.email,
         usage: usersTable.usage,
+        createdAt: usersTable.createdAt,
+        updatedAt: usersTable.updatedAt,
       })
       .from(usersTable)
       .where(eq(usersTable.id, id));
@@ -33,7 +35,7 @@ user.get("/:id", async (c) => {
       );
     }
 
-    return c.json<Result<User, never>>({
+    return c.json<Result<Omit<User, "createdAt" | "updatedAt">, never>>({
       data: userData[0],
       error: null,
     });
