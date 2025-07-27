@@ -19,6 +19,8 @@ const composio = new Composio({
 });
 
 const gmailTools = await composio.tools.get("user_308BwV2pzGvbyVgD28IXAw8GTdp", { toolkits: ['GMAIL'] });
+const googleDriveTools = await composio.tools.get("user_308BwV2pzGvbyVgD28IXAw8GTdp", { toolkits: ['GOOGLEDRIVE'] });
+const tools = [...gmailTools, ...googleDriveTools];
 
 
 interface InvokeAgentInput {
@@ -52,7 +54,7 @@ export async function invokeAgent(
     apiKey: process.env.OPENAI_API_KEY!,
   });
 
-  const llmWithTools = llm.bindTools(gmailTools);
+  const llmWithTools = llm.bindTools(tools);
 
   // Custom tool node that handles authentication errors
   async function customToolNode(state: typeof MessagesAnnotation.State) {
@@ -66,8 +68,9 @@ export async function invokeAgent(
     const toolResults: ToolMessage[] = [];
 
     // Execute tools using the default ToolNode first
-    const defaultToolNode = new ToolNode(gmailTools);
+    const defaultToolNode = new ToolNode(tools);
     const toolResult: any = await defaultToolNode.invoke(state);
+    console.log(toolResult)
 
     // Check if any tool result contains "No connected accounts found" error
     const resultMessages = toolResult?.messages || [];
@@ -79,6 +82,10 @@ export async function invokeAgent(
           
           // Extract the entityId from the original tool call or use a default
           const entityId = userId; // This should be extracted from your user context
+
+          // get the toolkit from the tool name
+          console.log(message.content)
+          const toolkit = message.name?.split("_")[0];
           
           try {
             // Call the authentication function for GMAIL toolkit

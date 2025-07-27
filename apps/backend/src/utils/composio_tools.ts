@@ -5,6 +5,7 @@ import "dotenv/config";
 import { v4 as uuidv4 } from 'uuid';
 import { Composio } from '@composio/core';
 import fs from "fs";
+
 const composio = new Composio({
     apiKey: process.env.COMPOSIO_API_KEY,
   });
@@ -12,12 +13,8 @@ const composio = new Composio({
 const db = createDb();
 
 const toolkit_map = {
-    GMAIL: 'ac_vUVPMcYodlyk',
-    SLACK: 'ac_uKHR9HSVxPMT',
-    NOTION: 'ac_jI7fgcOkm_5H',
-    GOOGLEDOCS: 'ac_IFCAK6LDGDUj',
-    GOOGLEDRIVE: 'ac_RH9TMTfMUVaE',
-    LINEAR: 'ac_l3TTEvCKHXFR'
+    GMAIL: 'ac_-GPNm4XGBzIA',
+    GOOGLEDRIVE: 'ac_c7mHxAvwsQkt',
 
 }
 
@@ -44,12 +41,12 @@ export async function authenticateUserForToolkit(entityId: string, toolkit: stri
   
 // }
 
-// Instead of requesting all at once:
+// // Instead of requesting all at once:
 // const tools = await composio.tools.get("user_308BwV2pzGvbyVgD28IXAw8GTdp", {
 //     toolkits: Object.keys(toolkit_map),
 // });
 
-// Try this sequential approach:
+// // Try this sequential approach:
 // const allTools = [];
 
 // for (const toolkit of Object.keys(toolkit_map)) {
