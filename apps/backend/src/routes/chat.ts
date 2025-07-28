@@ -46,6 +46,7 @@ chat.post("/agent", async (c) => {
             {
               configurable: {
                 thread_id: config.thread_id,
+                userId,
               },
             }
           );

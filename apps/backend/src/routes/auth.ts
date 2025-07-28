@@ -41,15 +41,12 @@ auth.get("/callback/gmail", async (c) => {
       return c.redirect("/integrations?error=unauthorized");
     }
 
-    const {
-      GOOGLE_OAUTH_CLIENT_ID,
-      GOOGLE_OAUTH_CLIENT_SECRET,
-      WEB_APP_URL,
-    } = c.env as {
-      GOOGLE_OAUTH_CLIENT_ID: string;
-      GOOGLE_OAUTH_CLIENT_SECRET: string;
-      WEB_APP_URL: string;
-    };
+    const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, WEB_APP_URL } =
+      c.env as {
+        GOOGLE_OAUTH_CLIENT_ID: string;
+        GOOGLE_OAUTH_CLIENT_SECRET: string;
+        WEB_APP_URL: string;
+      };
 
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",

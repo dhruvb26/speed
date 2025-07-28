@@ -72,7 +72,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen max-w-7xl mx-auto">
+    <div className="flex flex-col h-screen max-w-6xl mx-auto">
       <div className="flex-1 overflow-y-auto py-8 space-y-4 px-24 custom-scrollbar">
         {isFetchingHistory ? (
           <div className="flex justify-center items-center h-full">

@@ -6,10 +6,10 @@
     "dev": "turbo dev"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "prettier": "^3.1.1",
+    "@types/node": "^22.16.5",
+    "prettier": "^3.6.2",
     "turbo": "^2.5.5",
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.3"
   },
   "packageManager": "pnpm@9.15.1",
   "engines": {
@@ -17,13 +17,13 @@
   },
   "dependencies": {
     "@langchain/community": "^0.3.49",
-    "@langchain/core": "^0.3.65",
-    "@langchain/langgraph": "^0.3.10",
-    "@langchain/openai": "^0.6.2",
-    "@slack/web-api": "^7.0.0",
-    "dotenv": "^16.0.0",
-    "googleapis": "^140.0.0",
-    "node-fetch": "^3.0.0",
-    "openai": "^5.10.1"
+    "@langchain/core": "^0.3.66",
+    "@langchain/langgraph": "^0.3.12",
+    "@langchain/openai": "^0.6.3",
+    "@slack/web-api": "^7.9.3",
+    "dotenv": "^16.6.1",
+    "googleapis": "^140.0.1",
+    "node-fetch": "^3.3.2",
+    "openai": "^5.10.2"
   }
 }
